@@ -2,39 +2,40 @@
 
 ## Approach
 
-I developed an automated pipeline that extracts audio from an input MP4, transcribes vocals with Whisper, estimates visual characteristics from sampled frames using OpenCV, and renders word-timed karaoke-style subtitles with FFmpeg.
+I developed an automated pipeline that extracts audio from an input MP4, transcribes vocals with Whisper large-v3, estimates visual characteristics from sampled frames using OpenCV, and renders karaoke-style subtitles with FFmpeg.
 
-Whisper provides transcription and word-level timestamps. OpenCV samples frames to estimate a palette and motion level. An optional Replicate-hosted LLaVA vision-language model can propose a visual style plan. If the API is unavailable or no token is configured, the pipeline falls back to local visual heuristics.
+Whisper supplies transcription and word-level timestamps. OpenCV samples frames to estimate a color palette and motion level. An optional Replicate-hosted LLaVA vision-language model can suggest a visual style. When the vision API is unavailable or no token is configured, the pipeline uses a local OpenCV-based fallback.
 
-The generated output includes a rendered MP4, timing metadata, a style plan, and a quality report.
+The pipeline also writes timing metadata, a style plan, and a quality report.
 
-## Design decisions
+## Key design decisions
 
-- Used Whisper large-v3 for transcription.
-- Requested word-level timestamps to support karaoke-style highlighting.
-- Sampled video frames instead of processing every frame for style estimation.
-- Added a local fallback so video rendering can continue without the external vision API.
-- Used ASS subtitle styling and FFmpeg for rendering.
-- Generated JSON metadata and basic automated quality checks.
+- Used Whisper large-v3 for multilingual-capable transcription, with the language configurable in the notebook.
+- Requested word-level timestamps for karaoke-style highlighting.
+- Sampled frames instead of analyzing every frame.
+- Added a local fallback to allow rendering without the optional vision API.
+- Used ASS subtitles and FFmpeg for subtitle rendering and video encoding.
+- Generated JSON quality reports to document basic checks and known limitations.
 
 ## Results
 
-The selected run's quality report records:
-- Render success: true
-- Output duration: 246.798 seconds
-- Duration difference from input: 0 seconds
-- Recognized words: 100
-- Mean Whisper word probability: 0.924
-- Timing anomalies: 1
-- Vision API used: false
-- Style source: OpenCV fallback
+Both selected runs report successful rendering and an output duration matching the input duration.
 
-These checks indicate successful rendering and duration preservation. They do not establish that every lyric is perfectly synchronized.
+| Metric | `lyric_video.mp4` | `lyric_video-4.mp4` |
+|---|---:|---:|
+| Output duration | 274.314 s | 246.798 s |
+| Recognized words | 323 | 100 |
+| Mean Whisper word probability | 0.740 | 0.924 |
+| Timing anomalies | 3 | 1 |
+| Vision API used | No | No |
+| Style source | OpenCV fallback | OpenCV fallback |
+
+These values are taken from the corresponding quality reports. Mean Whisper word probability is not a guarantee of transcription correctness. The two videos have different durations and word counts, so the metrics alone do not establish which output is better.
 
 ## Limitations
 
-Singing is challenging for speech-recognition systems, and word timestamps can be inaccurate. The quality checks are heuristic and do not verify synchronization throughout the entire video. The vision model, when enabled, sees only sampled frames. The OpenCV fallback estimates visual style but does not fully understand narrative context or musical rhythm. The current output also depends on the selected language and audio quality.
+Singing is challenging for speech-recognition systems, and word-level timestamps may be inaccurate. The automated checks verify basic conditions such as output existence and duration, but do not establish exact synchronization throughout the video. The optional vision model sees only sampled frames, and the OpenCV fallback does not fully capture narrative context or musical rhythm.
 
-## What I would do next
+## Future improvements
 
-I would evaluate alignment against manually verified lyric timings, test multiple languages and music genres, sample frames adaptively around scene changes, and incorporate audio rhythm into subtitle animation. I would also compare fallback styling with vision-model recommendations and report measurable synchronization and visual-consistency metrics.
+With more time or budget, I would evaluate synchronization against manually verified lyric timings, test multiple languages and music genres, sample frames around scene changes, and incorporate audio rhythm into animation. I would also compare vision-model styling against the fallback and introduce measurable synchronization and visual-consistency metrics.
