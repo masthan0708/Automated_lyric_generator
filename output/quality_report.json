@@ -1,0 +1,22 @@
+{
+  "render_success": true,
+  "output_duration_seconds": 246.798,
+  "duration_difference_seconds": 0.0,
+  "word_count": 100,
+  "mean_whisper_word_probability": 0.924,
+  "timing_anomaly_count": 1,
+  "vision_api_used": false,
+  "style_source": "opencv_fallback",
+  "checks": {
+    "output_exists": true,
+    "output_nonempty": true,
+    "duration_close": true,
+    "transcript_nonempty": true
+  },
+  "limitations": [
+    "Whisper timestamps may be inaccurate for singing.",
+    "Heuristic checks do not prove exact synchronization.",
+    "Vision model sees sampled frames only.",
+    "Fallback style is based on local visual features."
+  ]
+}
