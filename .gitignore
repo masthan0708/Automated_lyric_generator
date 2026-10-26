@@ -6,3 +6,9 @@ __pycache__/
 *.py[cod]
 .venv/
 audio.wav
+
+# macOS
+.DS_Store
+
+# Generated video outputs (keep locally)
+lyric_video*.mp4
